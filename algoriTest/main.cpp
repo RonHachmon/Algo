@@ -3,8 +3,8 @@
 #include <list>
 
 using namespace std;
-void coverArray(vector<list<int>>* vec);
-void coverList(vector<list<int>>* vec, int VerticeTofind, int listIndex);
+vector<int> coverAdjacencyList(vector<list<int>>* vec);
+bool findClosingCircle(vector<list<int>>* list, vector<vector<int>>* matrix, int VerticeTofind, int listIndex, vector<int>* triangle);
 void checkPartner(vector<list<int>>* vec, int VerticeTofind,int listToLookIndex);
 void resetMatrix(vector<vector<int>>* vec,int size);
 void printMatrix(vector<vector<int>>* vec);
@@ -41,19 +41,22 @@ int main(void)
 	vec.push_back(list3);
 	vec.push_back(list4);
 	vec.push_back(list5);
-	/*coverArray(&vec);*/
+	coverAdjacencyList(&vec);
 
-	resetMatrix(&matrix, 5);
-	resetMatrix(&matrixP2, 5);
-	resetMatrix(&matrixP3, 5);
-	/*printMatrix(&matrix);*/
-	convertListToMatrix(&matrix, &vec);
-	multiply(&matrix, &matrix,&matrixP2);
-	cout << endl;
-	printMatrix(&matrixP2);
-	cout << endl;
-	multiply(&matrix, &matrixP2, &matrixP3);
-	printMatrix(&matrixP3);
+	//resetMatrix(&matrix, 5);
+	//resetMatrix(&matrixP2, 5);
+	//resetMatrix(&matrixP3, 5);
+	///*printMatrix(&matrix);*/
+	//
+	//convertListToMatrix(&matrix, &vec);
+	//printMatrix(&matrix);
+	//cout << endl;
+	//multiply(&matrix, &matrix,&matrixP2);
+	//cout << endl;
+	//printMatrix(&matrixP2);
+	//cout << endl;
+	//multiply(&matrix, &matrixP2, &matrixP3);
+	//printMatrix(&matrixP3);
 }
 void multiply(vector<vector<int>>* source_matrixA, vector<vector<int>>* source_matrixB, vector<vector<int>>* target_matrix)
 {
@@ -105,33 +108,42 @@ vector<int> emptyVec(int size)
 	return a;
 }
 
-void coverArray(vector<list<int>>* vec)
+vector<int> coverAdjacencyList(vector<list<int>>* vec)
 {
+	vector<vector<int>> matrix;
+	vector<int> triangle;
+	resetMatrix(&matrix, (*vec).size());
+	convertListToMatrix(&matrix,vec);
 	for (int i = 0; i < (*vec).size(); i++)
 	{
 		for (int x : (*vec)[i])
 		{
-			coverList(vec, i + 1, x-1);
+			if (findClosingCircle(vec, &matrix, i + 1, x - 1, &triangle)==true)
+			{
+				triangle.push_back(i + 1);
+				triangle.push_back(x);
+				triangle.push_back(triangle[0]);		
+				return triangle;
+			}
+			
 		}
 	}
+	return triangle;
 }
-//	for (int i = 0; i < (*vec).size(); i++)
-//	{
-//		cout << i + 1 << ':';
-//		for (int x : (*vec)[i]) {
-//			cout << x << ',';
-//		}
-//		cout << endl;
-//	}
-//}
-void coverList(vector<list<int>>* vec, int VerticeTofind,int listIndex)
+
+bool findClosingCircle(vector<list<int>>* list, vector<vector<int>>* matrix, int VerticeTofind, int listIndex,vector<int>* triangle)
 {
-	for (int x : (*vec)[listIndex]) {
+	for (int x : (*list)[listIndex]) {
 		if (x != VerticeTofind)
 		{
-			checkPartner(vec, VerticeTofind, x-1);
+			if ((*matrix)[x-1][VerticeTofind-1] == 1)
+			{
+				(*triangle).push_back(x);
+				return true;
+			}
 		}
 	}
+	return false;
 }
 void checkPartner(vector<list<int>>* vec, int VerticeTofind, int listToLookIndex)
 {
