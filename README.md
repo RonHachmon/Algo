@@ -1,3 +1,4 @@
-# Algo
-Algoritim code assigment 
-C++ program of a 3 different algoritham's to find a triangle in a given graph
+# Algorithm project
+
+Algorithm code assigment for finding a triangle in a given graph using three different algorithms. 
+
